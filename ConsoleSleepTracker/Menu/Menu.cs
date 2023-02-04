@@ -1,6 +1,12 @@
-﻿namespace ConsoleSleepTracker.Menu;
+﻿using ConsoleSleepTracker.Context;
+using ConsoleSleepTracker.Entities;
+using Microsoft.EntityFrameworkCore;
+
+namespace ConsoleSleepTracker.Menu;
 internal class Menu
 {
+    private static readonly DbContextOptions<SleepDbContext> connectionString;
+
     internal static void MainMenu()
     {
         while (true)
@@ -27,15 +33,18 @@ internal class Menu
                 "Example: 1 to choose 1 option and enter time you go bed and wake up.\r\n" +
                 "");
 
-            string userInput = Console.ReadLine();
+            //============================================
+            Console.SetCursorPosition(0,5);
             Console.Write('>');
+            string userInput = Console.ReadLine();
 
             switch (userInput)
             {
                 case "1":
-
+                    OptionOne();
                     break;
                 case "2":
+                    OptionTwo();
                     break;
                 case "3":
                     Environment.Exit(0);
@@ -49,13 +58,84 @@ internal class Menu
     }
     static void OptionOne()
     {
-        while (true)
+        var connectionString = "server=(localdb)\\MSSQLLocalDB;database=SleepDb;trusted_connection=true";
+        var context = new SleepDbContext(connectionString);
+
+        /*string userInput;*/
+
+        // Entering Day, like: 12.02.2023
+        //=========================================================================
+        Console.WriteLine("Enter the today's date, My Dear Lord:");
+        Console.Write(">");
+        // DateOnly 
+        /* кароче на завтра сделать dateonly херню или дате тайм. Еще и подключить БД через Майкрософт скюл сервер и т.д. Вообщем хаха хихи. Аниме хозяин я сам себе хехе*/
+
+        Day day = new();
+
+        DateTime inputDay;
+        while (!DateTime.TryParse(Console.ReadLine(), out inputDay))
         {
-            string userInput = Console.ReadLine();
-            
-            Console.WriteLine("Enter the today's date:");
-            // DateOnly 
-            /* кароче на завтра сделать dateonly херню или дате тайм. Еще и подключить БД через Майкрософт скюл сервер и т.д. Вообщем хаха хихи. Аниме хозяин я сам себе хехе*/
+            Console.Clear();
+            Console.WriteLine("You entered an invalid date, My Dear Lord!\r\n" +
+                "Please enter Date:");
+            Console.Write(">");
         }
+        //=========================================================================
+
+        //Entering Go To Bed Time, like: 23:00
+        //=========================================================================
+        Console.Clear();
+        Console.WriteLine("Enter time when you go to bed, My Lord:");
+        Console.Write(">");
+
+        DateTime inputBedTime;
+        while (!DateTime.TryParse(Console.ReadLine(), out inputBedTime))
+        {
+            Console.Clear();
+            Console.WriteLine("You entered an invalid Time, Little Star!\r\n" +
+                "Please enter BedTime, Little Star:");
+            Console.Write(">");
+        }
+        //=========================================================================
+
+        //Entering Wake Up Time, like: 7:00
+        //=========================================================================
+        Console.Clear();
+        Console.WriteLine("Enter time when You wake up, Sleeping Beauty:");
+        Console.Write(">");
+
+        DateTime inputWakeUpTime;
+        while (!DateTime.TryParse(Console.ReadLine(), out inputWakeUpTime))
+        {
+            Console.Clear();
+            Console.WriteLine("You entered an invalid Time, Sleeping Beauty!\r\n" +
+                "Please enter WakeUpTime, Sleeping Beauty:");
+            Console.Write(">");
+        }
+        //=========================================================================
+
+        day = new() { Date = inputDay, GoToSleepTime = inputBedTime, GetUpTime = inputWakeUpTime };
+
+        context.Days.Add(day);
+        context.SaveChanges();
+        Console.WriteLine("You successfully added new day, My Master!");
+        Console.ReadKey();
+        //=========================================================================
+    }
+
+    static void OptionTwo()
+    {
+        var connectionString = "server=(localdb)\\MSSQLLocalDB;database=SleepDb;trusted_connection=true";
+        var context = new SleepDbContext(connectionString);
+
+        var days = context.Days;
+
+        foreach (Day day in days)
+        {
+            Console.WriteLine("Showing All Days, My Lord!");
+            Console.WriteLine($" Id: {day.Id} | Day: {day.Date} | Go To Bed: {day.GoToSleepTime} | Wake Up: {day.GetUpTime}");
+        }
+        Console.WriteLine("Press any button to get back.");
+        Console.ReadKey();
     }
 }
