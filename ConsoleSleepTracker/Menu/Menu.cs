@@ -68,8 +68,7 @@ internal class Menu
         Console.WriteLine("Enter the today's date, My Dear Lord:");
         Console.Write(">");
         // DateOnly 
-        /* кароче на завтра сделать dateonly херню или дате тайм. Еще и подключить БД через Майкрософт скюл сервер и т.д. Вообщем хаха хихи. Аниме хозяин я сам себе хехе*/
-
+       
         Day day = new();
 
         DateTime inputDay;
@@ -129,13 +128,13 @@ internal class Menu
         var context = new SleepDbContext(connectionString);
 
         var days = context.Days;
-
+        
+        Console.WriteLine("Showing All Days, My Lord!\r\n");   
         foreach (Day day in days)
         {
-            Console.WriteLine("Showing All Days, My Lord!");
-            Console.WriteLine($" Id: {day.Id} | Day: {day.Date} | Go To Bed: {day.GoToSleepTime} | Wake Up: {day.GetUpTime}");
+            Console.WriteLine($" Id: {day.Id} | Day: {day.Date.ToString("dd.MMMM.yyyy")} {day.Date.DayOfWeek} | Go To Bed: {day.GoToSleepTime.TimeOfDay} | Wake Up: {day.GetUpTime.TimeOfDay}");
         }
-        Console.WriteLine("Press any button to get back.");
+        Console.WriteLine("\r\nPress any button to get back.");
         Console.ReadKey();
     }
 }
